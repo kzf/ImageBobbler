@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Image Bobbler</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" type="text/css" href="bower_components/jquery-ui/themes/flick/jquery-ui.min.css">
+    <link rel="stylesheet" type="text/css" href="bower_components/jquery-ui/themes/flick/theme.css">
+    <script src="bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="bower_components/jquery-ui/jquery-ui.min.js"></script>
+  </head>
+  <body>
+  
+  <header>ImageBobbler</header>
+  
+  
+  
+  <div class="content-block">
+    <div class="drop-target"><p>Drop image here</p></div>
+    <canvas id="bobbledImage" width="0" height="0"></canvas>
+  </div>
+  
+
+  <script type="text/javascript">
+  
+    var MAX_WIDTH = 960;
+  
+    var Bobbler = function(src) {
+      this.src = src;
+      this.canvas = document.getElementById("bobbledImage");
+      this.data = null;
+    };
+    
+    Bobbler.prototype.render = function() {
+      var image = new Image();
+      var canvas = this.canvas;
+      var self = this;
+      
+      image.onload = function(){
+        // Resize image to fit in the 960px layout
+        if(image.width > MAX_WIDTH) {
+          image.height *= MAX_WIDTH / image.width;
+          image.width = MAX_WIDTH;
+        }
+        
+        // Draw resized image to canvas so we can access image data
+        var ctx = canvas.getContext("2d");
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        canvas.width = image.width;
+        canvas.height = image.height;
+        ctx.drawImage(image, 0, 0, image.width, image.height);
+        
+        // Load image data
+        self.data = ctx.getImageData(0, 0, image.width, image.height).data;
+        
+        self.bobble();
+      };
+      image.src = this.src;
+    }
+    
+    Bobbler.prototype.bobble = function() {
+      var canvas = this.canvas, data = this.data;
+      var ctx = canvas.getContext("2d");
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      var drawCircle = function(x, y, r, g, b) {
+        ctx.beginPath();
+        ctx.arc(x, y, 3, 0, 2 * Math.PI, false);
+        ctx.fillStyle = "rgb(" + r + "," + g + "," + b + ")";
+        ctx.fill();
+      }
+      
+      var x, y, lim_x, lim_y, i;
+      for (x=2, lim_x = canvas.width - 2; x < lim_x; x += 5) {
+        for (y=2, lim_y = canvas.height - 2; y < lim_y; y += 5) {
+          i = y*4*canvas.width + x*4;
+          drawCircle(x, y, data[i], data[i+1], data[i+2]);
+        }
+      }
+    }
+    
+    var LoadedImage = null;
+
+    function loadImage(src){
+      //	Prevent any non-image file type from being read.
+      if(!src.type.match(/image.*/)){
+        console.log("The dropped file is not an image: ", src.type);
+        return;
+      }
+      
+      //	Create our FileReader and run the results through the render function.
+      var reader = new FileReader();
+      reader.onload = function(e){
+        LoadedImage = new Bobbler(e.target.result);
+        LoadedImage.render();
+        LoadedImage.bobble();
+      };
+      reader.readAsDataURL(src);
+    }
+
+    var target = $(".drop-target");
+    target.dragenterCount = 0;
+    
+    // Add hover effect when we hover over the draggable area
+    target.on("dragenter", function(e){
+      if (target.dragenterCount == 0) target.addClass("file-hover");
+      target.dragenterCount++;
+    });
+    target.on("dragleave", function(e){
+      target.dragenterCount--;
+      if (target.dragenterCount == 0) target.removeClass("file-hover");
+    });
+    
+    // Show that files can be moved here
+    target.on("dragover", function(e){
+      e.preventDefault(); 
+    });
+    
+    // When we drop an image over the container, trigger the loading
+    target.on("drop", function(e){
+      e.preventDefault();
+      loadImage(e.originalEvent.dataTransfer.files[0]);
+      target.removeClass("file-hover");
+      target.addClass("image-loaded");
+      target.dragenterCount = 0;
+    });
+    
+  </script>
+
+  </body>
+</html>
