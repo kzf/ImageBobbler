@@ -24,6 +24,7 @@
   <script type="text/javascript">
   
     var MAX_WIDTH = 960;
+    var TWO_PI = 2 * Math.PI;
   
     var Bobbler = function(src) {
       this.src = src;
@@ -53,9 +54,12 @@
         // Load image data
         self.data = ctx.getImageData(0, 0, image.width, image.height).data;
         
-        self.bobble();
+        self.bobbleClip();
       };
+      
       image.src = this.src;
+      
+      this.image = image;
     }
     
     Bobbler.prototype.bobble = function() {
@@ -63,20 +67,101 @@
       var ctx = canvas.getContext("2d");
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       
-      var drawCircle = function(x, y, r, g, b) {
+      var drawCircle = function(x, y, r, g, b, a) {
         ctx.beginPath();
-        ctx.arc(x, y, 3, 0, 2 * Math.PI, false);
-        ctx.fillStyle = "rgb(" + r + "," + g + "," + b + ")";
+        ctx.arc(x, y, 3, 0, TWO_PI, false);
+        ctx.fillStyle = "rgba(" + r + "," + g + "," + b + "," + a + ")";
+        ctx.closePath();
         ctx.fill();
       }
-      
-      var x, y, lim_x, lim_y, i;
-      for (x=2, lim_x = canvas.width - 2; x < lim_x; x += 5) {
-        for (y=2, lim_y = canvas.height - 2; y < lim_y; y += 5) {
-          i = y*4*canvas.width + x*4;
-          drawCircle(x, y, data[i], data[i+1], data[i+2]);
+      requestAnimationFrame(function() {
+        //var myData = [];
+        
+        var x, y, lim_x, lim_y, i;
+        for (x=2, lim_x = canvas.width - 2; x < lim_x; x += 5) {
+          for (y=2, lim_y = canvas.height - 2; y < lim_y; y += 5) {
+            i = y*4*canvas.width + x*4;
+            //myData.push({x: x, y: y, r: data[i], g: data[i+1], b: data[i+2], a: data[i+3]});
+            drawCircle(x, y, data[i], data[i+1], data[i+2], data[i+3]/255);
+          }
         }
+        
+        /*var count = 0;
+        myData.forEach(function (d) {
+          drawCircle(d.x, d.y, d.r, d.g, d.b, d.a);
+        });*/
+      });
+    }
+    
+    Bobbler.prototype.bobbleMask = function() {
+      var canvas = this.canvas, data = this.data;
+      var ctx = canvas.getContext("2d");
+      //ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      var drawCircle = function(x, y, r, g, b, a) {
+        maskctx.moveTo(x, y);
+        maskctx.arc(x, y, 3, 0, TWO_PI, false);
       }
+      
+      var mask = document.createElement("canvas");
+      mask.width = canvas.width;
+      mask.height = canvas.height;
+      var maskctx = mask.getContext("2d");
+      
+      requestAnimationFrame(function() {
+        
+        maskctx.fillStyle = "white";
+        maskctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+                
+        maskctx.globalCompositeOperation = 'xor';
+        maskctx.fillStyle = "white";
+        maskctx.beginPath();
+        
+        var x, y, lim_x, lim_y, i;
+        for (x=2, lim_x = canvas.width - 2; x < lim_x; x += 5) {
+          for (y=2, lim_y = canvas.height - 2; y < lim_y; y += 5) {
+            i = y*4*canvas.width + x*4;
+            drawCircle(x, y, data[i], data[i+1], data[i+2], data[i+3]/255);
+          }
+        }
+        
+        maskctx.closePath();
+        maskctx.fill();
+
+        
+        ctx.drawImage(mask, 0, 0);
+      
+      });
+    }
+    
+    Bobbler.prototype.bobbleClip = function() {
+      var canvas = this.canvas, data = this.data;
+      var ctx = canvas.getContext("2d");
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      var drawCircle = function(x, y, r, g, b, a) {
+        ctx.moveTo(x, y);
+        ctx.arc(x, y, 3, 0, TWO_PI, false);
+      }
+      var self = this;
+      requestAnimationFrame(function() {
+ 
+        ctx.beginPath();
+        
+        var x, y, lim_x, lim_y, i;
+        for (x=2, lim_x = canvas.width - 2; x < lim_x; x += 15) {
+          for (y=2, lim_y = canvas.height - 2; y < lim_y; y += 15) {
+            i = y*4*canvas.width + x*4;
+            drawCircle(x, y, data[i], data[i+1], data[i+2], data[i+3]/255);
+          }
+        }
+        
+        ctx.clip();
+        
+        ctx.drawImage(self.image, 0, 0, self.image.width, self.image.height);
+      
+      });
     }
     
     var LoadedImage = null;
@@ -93,7 +178,6 @@
       reader.onload = function(e){
         LoadedImage = new Bobbler(e.target.result);
         LoadedImage.render();
-        LoadedImage.bobble();
       };
       reader.readAsDataURL(src);
     }

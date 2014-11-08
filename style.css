@@ -12,6 +12,11 @@ header {
   text-align: center;
 }
 
+canvas {
+  display: block;
+  margin: 0 auto;
+}
+
 .content-block {
   width: 960px;
   margin: 30px auto 0 auto;
