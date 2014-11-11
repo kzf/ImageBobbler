@@ -215,4 +215,11 @@ pip-log.txt
 #Mr Developer
 .mr.developer.cfg
 
-/bower_components
+################
+# Node, Bower and Sass
+################
+/node_modules/
+/bower_components/
+/lib/*
+/.sass_cache/
+/compiled/

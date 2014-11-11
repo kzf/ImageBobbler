@@ -1,9 +1,10 @@
 {
-  "name": "ImageBobbler",
+  "name": "grunt-bower-template",
   "version": "0.0.0",
   "authors": [
     "kzf <kzfray@gmail.com>"
   ],
+  "description": "Grunt and Bower template",
   "license": "MIT",
   "private": true,
   "ignore": [
@@ -16,5 +17,8 @@
   "dependencies": {
     "jquery": "~2.1.1",
     "jquery-ui": "~1.11.2"
+  },
+  "devDependencies": {
+    "qunit": "~1.15.0"
   }
 }

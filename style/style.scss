@@ -1,0 +1,155 @@
+@import '_jquery-ui.theme.min';
+// Fix blue borders on jQuery UI tabs
+.ui-widget * { outline: none; }
+
+// Main theme colors
+
+$backgroundA: #D6D5CA; //beige
+$backgroundB: #CC6837; //orange
+$highlightA:  #5FBF70; //green
+$highlightB:  #91B6D6; //blue
+$highlightC:  #C8BFCC; //purple
+
+$backgroundB-d: darken($backgroundB, 15%);
+
+$font-stack: Helvetica, sans-serif;
+
+/* Browser Prefix Mixins */
+@mixin prefix($property, $value) {
+  -webkit-#{$property}: #{$value};
+     -moz-#{$property}: #{$value};
+          #{$property}: #{$value};
+}
+@mixin border-radius($r) {
+  @include prefix('border-radius', $r);
+}
+@mixin border-box() {
+  @include prefix('sizing', 'border-box');
+}
+/* apply a natural box layout model to all elements, but allowing components to change */
+html {
+  box-sizing: border-box;
+}
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
+
+/* Main Page Styles */
+@media only screen and(min-width: 960px) {
+  header {
+    width: 960px;
+    height: 50px;
+  }
+  .content-block {
+    @include border-box();
+    width: 950px;
+  }
+  .drop-target {
+    height: 250px;
+  }
+}
+
+
+body {
+  margin: 0;
+  padding: 0;
+  font: 100% $font-stack;
+  background: $backgroundA;
+}
+
+header {
+  position: relative;
+  margin: 0 auto;
+  background: $backgroundB;
+  text-align: right;
+  @include border-radius(0px 0px 10px 10px);
+  box-shadow: 0 5px 0px 0px $highlightC;
+}
+  header h1 {
+    padding: 0;
+    margin: 0;
+    position: absolute;
+    font-size: 300%;
+    top: 6px;
+    color: lighten($backgroundA, 10%);
+    left: 50px;
+  }
+  header a {
+    text-decoration: none;
+    display: inline-block;
+    color: white;
+    text-align: center;
+    margin-right: 15px;
+    margin-top: 5px;
+    padding: 7px;
+    width: 16px;
+    height: 16px;
+    background: $highlightA;
+    @include border-radius(15px);
+    box-shadow: 0px 5px 0px 0px $backgroundB-d;
+    border: 2px solid $backgroundB-d;
+  }
+  header a:hover {
+    transform: translateY(5px);
+    box-shadow: 0px -5px 0px 0px $backgroundB-d;
+  }
+
+canvas {
+  display: block;
+  margin: 0 auto;
+}
+
+.content-block {
+  margin: 30px auto 0 auto;
+}
+
+.drop-target {
+  position: relative;
+  text-align: center;
+  background: $backgroundA;
+  border-radius: 10px;
+  border: 3px dashed darken($highlightA, 10%);
+  //box-shadow: 0 0 0px 5px darken($highlightA, 10%);
+  background: repeating-linear-gradient(
+      45deg,
+      $backgroundA,
+      $backgroundA 35%,
+      lighten($highlightA, 20%) 35%,
+      lighten($highlightA, 20%) 50%
+    );
+  background-size: 20px 20px;
+}
+  .drop-target.file-hover {
+    background: repeating-linear-gradient(
+      45deg,
+      $backgroundA,
+      $backgroundA 35%,
+      lighten($highlightA, 10%) 35%,
+      lighten($highlightA, 10%) 50%
+    );
+    background-size: 20px 20px;
+  }
+  .drop-target.image-loaded {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    top: 10px;
+    left: 10px;
+  }
+  .drop-target p {
+    position: relative;
+    color: white;
+    margin: 0;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+fieldset.slider-col {
+  display: inline-block;
+  margin: 0;
+  padding: 10px;
+  width: 33%;
+  border: none;
+  background: lighten($highlightC, 10%);
+}
