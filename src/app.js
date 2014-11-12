@@ -2,7 +2,11 @@ var MAX_WIDTH = 960;
 var TWO_PI = 2 * Math.PI;
 
 $(".bobble-controls").tabs();
-$(".slider").slider();
+$(".slider").slider({
+  range: "min"
+});
+$(".spinner").spinner();
+$("#bobble_it").button();
 
 var Bobbler = function(src) {
   this.src = src;

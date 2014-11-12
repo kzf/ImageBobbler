@@ -83,8 +83,8 @@ header {
     margin-right: 15px;
     margin-top: 5px;
     padding: 7px;
-    width: 16px;
-    height: 16px;
+    width: 30px;
+    height: 30px;
     background: $highlightA;
     @include border-radius(15px);
     box-shadow: 0px 5px 0px 0px $backgroundB-d;
@@ -145,11 +145,29 @@ canvas {
     transform: translateY(-50%);
   }
 
-fieldset.slider-col {
-  display: inline-block;
-  margin: 0;
-  padding: 10px;
-  width: 33%;
+.control-block {
+  width: 100%;
+  padding: 5px;
+  margin: 0 auto;
+  padding: 15px;
   border: none;
   background: lighten($highlightC, 10%);
+  @include border-radius(5px);
+}
+.slider {
+  width: 100%;
+}
+.spinner-col {
+  width: 90px;
+}
+
+.action-button {
+  width: 100px;
+}
+  .action-button .ui-button-text {
+    font-size: 1.3em;
+  }
+.button-group {
+  text-align: center;
+  padding: 0px 0px 15px 0px;
 }

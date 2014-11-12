@@ -221,5 +221,7 @@ pip-log.txt
 /node_modules/
 /bower_components/
 /lib/*
-/.sass_cache/
+/.sass-cache/
 /compiled/
+.sass-cache/bd7371f8a1e386955c429a3e338b0ffb10782491/style.scssc
+.sass-cache/bd7371f8a1e386955c429a3e338b0ffb10782491/_jquery-ui.theme.min.scssc
